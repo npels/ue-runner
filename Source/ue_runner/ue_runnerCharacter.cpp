@@ -8,6 +8,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+#include "Engine/World.h"
+#include "BulletActor.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Aue_runnerCharacter
@@ -41,6 +45,7 @@ void Aue_runnerCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	// Set up gameplay key bindings
 	PlayerInputComponent->BindAxis("MoveForward", this, &Aue_runnerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &Aue_runnerCharacter::MoveRight);
+	PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &Aue_runnerCharacter::PrimaryFire);
 }
 
 void Aue_runnerCharacter::MoveForward(float Value) {
@@ -57,4 +62,25 @@ void Aue_runnerCharacter::MoveRight(float Value) {
 		const FVector Direction = FVector(0, 1, 0);
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void Aue_runnerCharacter::PrimaryFire() {
+	UWorld* w = GetWorld();
+	APlayerController* pc = UGameplayStatics::GetPlayerController(w, 0);
+
+	FHitResult hit;
+
+	pc->GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, false, hit);
+
+	FVector attackDirection = hit.ImpactPoint - GetActorTransform().GetLocation();
+	attackDirection.Z = 0;
+	attackDirection.Normalize();
+
+	FTransform SpawnTransform = GetActorTransform();
+	SpawnTransform.SetLocation(GetActorLocation() + attackDirection * 75);
+	SpawnTransform.SetRotation(attackDirection.Rotation().Quaternion());
+
+	FActorSpawnParameters SpawnParams;
+
+	w->SpawnActor<ABulletActor>(BulletBP, SpawnTransform, SpawnParams);
 }

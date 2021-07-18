@@ -18,6 +18,10 @@ class Aue_runnerCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(EditAnywhere, Category = Attack);
+	TSubclassOf<class ABulletActor> BulletBP;
+
 public:
 	Aue_runnerCharacter();
 
@@ -28,6 +32,8 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	void PrimaryFire();
 
 protected:
 	// APawn interface

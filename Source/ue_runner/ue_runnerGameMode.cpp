@@ -2,6 +2,7 @@
 
 #include "ue_runnerGameMode.h"
 #include "ue_runnerCharacter.h"
+#include "ue_runnerPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 Aue_runnerGameMode::Aue_runnerGameMode()
@@ -11,5 +12,6 @@ Aue_runnerGameMode::Aue_runnerGameMode()
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
+		PlayerControllerClass = Aue_runnerPlayerController::StaticClass();
 	}
 }
