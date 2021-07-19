@@ -20,7 +20,7 @@ class Aue_runnerCharacter : public ACharacter
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(EditAnywhere, Category = Attack);
-	TSubclassOf<class ABulletActor> BulletBP;
+	TSubclassOf<class AActor> BulletBP;
 
 public:
 	Aue_runnerCharacter();

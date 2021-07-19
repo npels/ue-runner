@@ -15,6 +15,12 @@ public:
 	// Sets default values for this actor's properties
 	ABulletActor();
 
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class UStaticMeshComponent* BulletMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class UProjectileMovementComponent* BulletMovement;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -22,5 +28,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };
