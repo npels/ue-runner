@@ -12,6 +12,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "BulletActor.h"
+#include "InteractableActor.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Aue_runnerCharacter
@@ -51,6 +52,7 @@ void Aue_runnerCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAxis("MoveRight", this, &Aue_runnerCharacter::MoveRight);
 	PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &Aue_runnerCharacter::PrimaryFire);
 	PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &Aue_runnerCharacter::PrimaryFireRelease);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &Aue_runnerCharacter::Interact);
 }
 
 void Aue_runnerCharacter::MoveForward(float Value) {
@@ -107,6 +109,21 @@ void Aue_runnerCharacter::PrimaryFireRelease() {
 
 void Aue_runnerCharacter::PrimaryFireEpilogue() {
 	attackOnCooldown = false;
+}
+
+void Aue_runnerCharacter::Interact() {
+	if (currentInteractable != NULL) {
+		currentInteractable->Interact();
+	}
+}
+
+void Aue_runnerCharacter::SetInteractable(class AInteractableActor* interactable) {
+	currentInteractable = interactable;
+}
+
+void Aue_runnerCharacter::RemoveInteractable(class AInteractableActor* interactable) {
+	if (currentInteractable != interactable) return;
+	currentInteractable = NULL;
 }
 
 void Aue_runnerCharacter::Tick(float DeltaTime) {

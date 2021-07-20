@@ -12,24 +12,27 @@ class Aue_runnerCharacter : public ACharacter
 	GENERATED_BODY()
 
 	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(EditAnywhere, Category = Attack)
-	TSubclassOf<class AActor> BulletBP;
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<class ABulletActor> BulletBP;
 
-	UPROPERTY(EditAnywhere, Category = Attack)
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	float attackCooldown = 0.5f;
 
-	UPROPERTY(VisibleAnywhere, Category = Attack)
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
 	bool attackOnCooldown = false;
 
-	UPROPERTY(VisibleAnywhere, Category = Attack)
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
 	bool primaryFireHeld = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Interaction")
+	class AInteractableActor* currentInteractable;
 
 public:
 	Aue_runnerCharacter();
@@ -44,8 +47,9 @@ protected:
 
 	void PrimaryFire();
 	void PrimaryFireRelease();
-
 	void PrimaryFireEpilogue();
+
+	void Interact();
 
 protected:
 	// APawn interface
@@ -60,4 +64,10 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION()
+	void SetInteractable(class AInteractableActor* interactable);
+
+	UFUNCTION()
+	void RemoveInteractable(class AInteractableActor* interactable);
 };
