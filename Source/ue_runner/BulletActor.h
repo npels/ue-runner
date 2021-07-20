@@ -21,6 +21,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	class UProjectileMovementComponent* BulletMovement;
 
+	UPROPERTY(EditAnywhere, Category = "Bullet Properties")
+	float damage = 1.f;
+
+	AController* playerController;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

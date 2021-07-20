@@ -17,6 +17,10 @@
 // Aue_runnerCharacter
 
 Aue_runnerCharacter::Aue_runnerCharacter() {
+
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -46,6 +50,7 @@ void Aue_runnerCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAxis("MoveForward", this, &Aue_runnerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &Aue_runnerCharacter::MoveRight);
 	PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &Aue_runnerCharacter::PrimaryFire);
+	PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &Aue_runnerCharacter::PrimaryFireRelease);
 }
 
 void Aue_runnerCharacter::MoveForward(float Value) {
@@ -65,6 +70,9 @@ void Aue_runnerCharacter::MoveRight(float Value) {
 }
 
 void Aue_runnerCharacter::PrimaryFire() {
+	primaryFireHeld = true;
+	if (attackOnCooldown) return;
+
 	UWorld* w = GetWorld();
 	APlayerController* pc = UGameplayStatics::GetPlayerController(w, 0);
 
@@ -76,11 +84,35 @@ void Aue_runnerCharacter::PrimaryFire() {
 	attackDirection.Z = 0;
 	attackDirection.Normalize();
 
+	FVector spawnLocation = GetActorLocation() + attackDirection * 75;
+	spawnLocation.Z -= 50.f;
+
 	FTransform SpawnTransform = GetActorTransform();
-	SpawnTransform.SetLocation(GetActorLocation() + attackDirection * 75);
+	SpawnTransform.SetLocation(spawnLocation);
 	SpawnTransform.SetRotation(attackDirection.Rotation().Quaternion());
 
 	FActorSpawnParameters SpawnParams;
 
-	w->SpawnActor<ABulletActor>(BulletBP, SpawnTransform, SpawnParams);
+	ABulletActor* bulletActor = w->SpawnActor<ABulletActor>(BulletBP, SpawnTransform, SpawnParams);
+	bulletActor->playerController = pc;
+
+	attackOnCooldown = true;
+	FTimerHandle attackTimer;
+	GetWorldTimerManager().SetTimer(attackTimer, this, &Aue_runnerCharacter::PrimaryFireEpilogue, attackCooldown);
+}
+
+void Aue_runnerCharacter::PrimaryFireRelease() {
+	primaryFireHeld = false;
+}
+
+void Aue_runnerCharacter::PrimaryFireEpilogue() {
+	attackOnCooldown = false;
+}
+
+void Aue_runnerCharacter::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	if (primaryFireHeld && !attackOnCooldown) {
+		PrimaryFire();
+	}
 }

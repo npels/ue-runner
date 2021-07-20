@@ -3,6 +3,7 @@
 
 #include "BulletActor.h"
 #include "Components/StaticMeshComponent.h"
+#include "Enemy.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -35,6 +36,11 @@ void ABulletActor::Tick(float DeltaTime)
 }
 
 void ABulletActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {
+	if (OtherActor->IsA(AEnemy::StaticClass())) {
+		FDamageEvent damageEvent;
+		Cast<AEnemy>(OtherActor)->TakeDamage(damage, damageEvent, playerController, this);
+	}
+
 	Destroy();
 }
 

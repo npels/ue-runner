@@ -19,8 +19,17 @@ class Aue_runnerCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(EditAnywhere, Category = Attack);
+	UPROPERTY(EditAnywhere, Category = Attack)
 	TSubclassOf<class AActor> BulletBP;
+
+	UPROPERTY(EditAnywhere, Category = Attack)
+	float attackCooldown = 0.5f;
+
+	UPROPERTY(VisibleAnywhere, Category = Attack)
+	bool attackOnCooldown = false;
+
+	UPROPERTY(VisibleAnywhere, Category = Attack)
+	bool primaryFireHeld = false;
 
 public:
 	Aue_runnerCharacter();
@@ -34,6 +43,9 @@ protected:
 	void MoveRight(float Value);
 
 	void PrimaryFire();
+	void PrimaryFireRelease();
+
+	void PrimaryFireEpilogue();
 
 protected:
 	// APawn interface
@@ -41,6 +53,9 @@ protected:
 	// End of APawn interface
 
 public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
