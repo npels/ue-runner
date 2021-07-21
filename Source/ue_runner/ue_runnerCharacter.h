@@ -32,7 +32,7 @@ class Aue_runnerCharacter : public ACharacter
 	bool primaryFireHeld = false;
 
 	UPROPERTY(VisibleAnywhere, Category = "Interaction")
-	class AInteractableActor* currentInteractable;
+	TScriptInterface <IInteractableObject> currentInteractable;
 
 public:
 	Aue_runnerCharacter();
@@ -66,8 +66,8 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	UFUNCTION()
-	void SetInteractable(class AInteractableActor* interactable);
+	void SetInteractable(TScriptInterface<class IInteractableObject> interactable);
 
 	UFUNCTION()
-	void RemoveInteractable(class AInteractableActor* interactable);
+	void RemoveInteractable(TScriptInterface<class IInteractableObject> interactable);
 };

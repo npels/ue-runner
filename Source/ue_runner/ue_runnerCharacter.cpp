@@ -12,7 +12,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "BulletActor.h"
-#include "InteractableActor.h"
+#include "InteractableObject.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Aue_runnerCharacter
@@ -112,16 +112,17 @@ void Aue_runnerCharacter::PrimaryFireEpilogue() {
 }
 
 void Aue_runnerCharacter::Interact() {
-	if (currentInteractable != NULL) {
-		currentInteractable->Interact();
+	if (currentInteractable != NULL && currentInteractable.GetObject() != NULL) {
+		UObject* obj = currentInteractable.GetObject();
+		IInteractableObject::Execute_Interact(obj);
 	}
 }
 
-void Aue_runnerCharacter::SetInteractable(class AInteractableActor* interactable) {
+void Aue_runnerCharacter::SetInteractable(TScriptInterface<IInteractableObject> interactable) {
 	currentInteractable = interactable;
 }
 
-void Aue_runnerCharacter::RemoveInteractable(class AInteractableActor* interactable) {
+void Aue_runnerCharacter::RemoveInteractable(TScriptInterface<IInteractableObject> interactable) {
 	if (currentInteractable != interactable) return;
 	currentInteractable = NULL;
 }

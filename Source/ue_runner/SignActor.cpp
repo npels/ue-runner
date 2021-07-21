@@ -8,6 +8,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "ExclamationPoint.h"
 #include "ue_runnerCharacter.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetTree.h"
+#include "Components/TextBlock.h"
+#include "TextData.h"
 
 // Sets default values
 ASignActor::ASignActor()
@@ -45,9 +49,8 @@ void ASignActor::OnPlayerOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 
 	Cast<Aue_runnerCharacter>(OtherActor)->SetInteractable(this);
 
-	FTransform SpawnTransform = GetActorTransform();
-	SpawnTransform.SetLocation(SpawnTransform.GetLocation() + FVector(0.f, 0.f, 100.f));
-	SpawnTransform.SetRotation(FQuat());
+	FTransform SpawnTransform = ExclamationSpawnTransform;
+	SpawnTransform.SetLocation(SpawnTransform.GetLocation() + GetActorTransform().GetLocation());
 
 	FActorSpawnParameters SpawnParams;
 
@@ -60,9 +63,27 @@ void ASignActor::OnPlayerOverlapEnd(UPrimitiveComponent* OverlappedComponent, AA
 	Cast<Aue_runnerCharacter>(OtherActor)->RemoveInteractable(this);
 
 	ExclamationPointActor->Destroy();
+
+	if (interactionState > 0) {
+		interactionState = 0;
+		SignTextWidget->RemoveFromParent();
+	}
 }
 
-void ASignActor::Interact() {
-	Destroy();
+int ASignActor::Interact_Implementation() {
+	if (SignTextWidget == NULL) return 0;
+
+	if (interactionState == 0) {
+		SignTextWidget->AddToViewport();
+	} else if (interactionState == SignTextData->TextBoxes.Num()) {
+		interactionState = 0;
+		SignTextWidget->RemoveFromParent();
+		return interactionState;
+	}
+	UTextBlock* text = (UTextBlock*)(SignTextWidget->WidgetTree->FindWidget("TextBox"));
+	text->SetText(FText::FromString(SignTextData->TextBoxes[interactionState]));
+	interactionState++;
+
+	return interactionState;
 }
 

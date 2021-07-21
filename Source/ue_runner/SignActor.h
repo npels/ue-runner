@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractableActor.h"
+#include "InteractableObject.h"
 #include "SignActor.generated.h"
 
 
 UCLASS()
-class UE_RUNNER_API ASignActor : public AInteractableActor
+class UE_RUNNER_API ASignActor : public AActor, public IInteractableObject
 {
 	GENERATED_BODY()
 	
@@ -26,11 +26,24 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	TSubclassOf<class AExclamationPoint> ExclamationPoint;
 
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	FTransform ExclamationSpawnTransform;
+
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	class UUserWidget* SignTextWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Interaction")
+	class UTextData* SignTextData;
+
+	UPROPERTY(VisibleAnywhere, Category = "Interaction")
+		int interactionState = 0;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void Interact() override;
+	int Interact();
+	virtual int Interact_Implementation() override;
 
 	class AExclamationPoint* ExclamationPointActor;
 
