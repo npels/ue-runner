@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Bullet Properties")
 	float damage = 1.f;
 
+	UPROPERTY(EditAnywhere, Category = "Bullet Properties")
+	class UWeaponElementData* currentElement;
+
 	AController* playerController;
 
 protected:
@@ -33,6 +36,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void SetElementType(class UWeaponElementData* element);
 
 private:
 	UFUNCTION()

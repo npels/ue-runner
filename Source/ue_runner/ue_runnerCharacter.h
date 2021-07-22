@@ -20,7 +20,13 @@ class Aue_runnerCharacter : public ACharacter
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<class ABulletActor> BulletBP;
+	TSubclassOf<class AActor> bulletBP;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	class UWeaponElementData* currentElement;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TArray<class UWeaponElementData*> elementTypes;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	float attackCooldown = 0.5f;
@@ -31,8 +37,11 @@ class Aue_runnerCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, Category = "Attack")
 	bool primaryFireHeld = false;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TArray<TSubclassOf<class AActor>> bulletTypes;
+
 	UPROPERTY(VisibleAnywhere, Category = "Interaction")
-	TScriptInterface <IInteractableObject> currentInteractable;
+	TScriptInterface<IInteractableObject> currentInteractable;
 
 public:
 	Aue_runnerCharacter();
@@ -52,6 +61,9 @@ protected:
 	void Interact();
 
 protected:
+
+	virtual void BeginPlay() override;
+
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
@@ -70,4 +82,13 @@ public:
 
 	UFUNCTION()
 	void RemoveInteractable(TScriptInterface<class IInteractableObject> interactable);
+
+	UFUNCTION(BlueprintCallable)
+	void SetBullet(int bulletIndex, float newAttackCooldown);
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponElement(int elementIndex);
+
+	UPROPERTY(BlueprintReadWrite)
+	class UUserWidget* GameUI;
 };

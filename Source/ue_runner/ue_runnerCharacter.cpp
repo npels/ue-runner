@@ -13,6 +13,8 @@
 #include "Engine/World.h"
 #include "BulletActor.h"
 #include "InteractableObject.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetTree.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Aue_runnerCharacter
@@ -41,6 +43,11 @@ Aue_runnerCharacter::Aue_runnerCharacter() {
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+}
+
+// Called when the game starts or when spawned
+void Aue_runnerCharacter::BeginPlay() {
+	Super::BeginPlay();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,8 +102,9 @@ void Aue_runnerCharacter::PrimaryFire() {
 
 	FActorSpawnParameters SpawnParams;
 
-	ABulletActor* bulletActor = w->SpawnActor<ABulletActor>(BulletBP, SpawnTransform, SpawnParams);
+	ABulletActor* bulletActor = w->SpawnActor<ABulletActor>(bulletBP, SpawnTransform, SpawnParams);
 	bulletActor->playerController = pc;
+	bulletActor->SetElementType(currentElement);
 
 	attackOnCooldown = true;
 	FTimerHandle attackTimer;
@@ -125,6 +133,17 @@ void Aue_runnerCharacter::SetInteractable(TScriptInterface<IInteractableObject> 
 void Aue_runnerCharacter::RemoveInteractable(TScriptInterface<IInteractableObject> interactable) {
 	if (currentInteractable != interactable) return;
 	currentInteractable = NULL;
+}
+
+void Aue_runnerCharacter::SetBullet(int bulletIndex, float newAttackCooldown) {
+	if (bulletTypes.IsValidIndex(bulletIndex)) {
+		bulletBP = bulletTypes[bulletIndex];
+		attackCooldown = newAttackCooldown;
+	}
+}
+
+void Aue_runnerCharacter::SetWeaponElement(int elementIndex) {
+	currentElement = elementTypes[elementIndex];
 }
 
 void Aue_runnerCharacter::Tick(float DeltaTime) {

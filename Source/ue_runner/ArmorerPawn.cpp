@@ -78,26 +78,23 @@ void AArmorerPawn::OnPlayerOverlapEnd(UPrimitiveComponent* OverlappedComponent, 
 
 	ExclamationPointActor->Destroy();
 
-	if (interactionState > 0) {
+	if (interactionState != 0) {
 		interactionState = 0;
-		SignTextWidget->RemoveFromParent();
+		ArmorerWidget->RemoveFromParent();
 	}
 }
 
 int AArmorerPawn::Interact_Implementation() {
-	if (SignTextWidget == NULL) return 0;
+	if (ArmorerWidget == NULL) return 0;
 
 	if (interactionState == 0) {
-		SignTextWidget->AddToViewport();
-	} else if (interactionState == SignTextData->TextBoxes.Num()) {
+		interactionState++;
+		ArmorerWidget->AddToViewport();
+		return interactionState;
+	} else {
 		interactionState = 0;
-		SignTextWidget->RemoveFromParent();
+		ArmorerWidget->RemoveFromParent();
 		return interactionState;
 	}
-	UTextBlock* text = (UTextBlock*)(SignTextWidget->WidgetTree->FindWidget("TextBox"));
-	text->SetText(FText::FromString(SignTextData->TextBoxes[interactionState]));
-	interactionState++;
-
-	return interactionState;
 }
 

@@ -13,6 +13,10 @@ class Aue_runnerGameMode : public AGameModeBase
 
 public:
 	Aue_runnerGameMode();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 };
 
 

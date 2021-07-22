@@ -2,9 +2,11 @@
 
 
 #include "BulletActor.h"
+#include "ue_runnerCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Enemy.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "WeaponElementData.h"
 
 // Sets default values
 ABulletActor::ABulletActor()
@@ -35,10 +37,19 @@ void ABulletActor::Tick(float DeltaTime)
 
 }
 
+void ABulletActor::SetElementType(class UWeaponElementData* element) {
+	currentElement = element;
+	BulletMesh->SetMaterial(0, element->material);
+}
+
 void ABulletActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {
+	if (OtherActor->IsA(Aue_runnerCharacter::StaticClass()) || OtherActor->IsA(StaticClass())) {
+		return;
+	}
+
 	if (OtherActor->IsA(AEnemy::StaticClass())) {
 		FDamageEvent damageEvent;
-		Cast<AEnemy>(OtherActor)->TakeDamage(damage, damageEvent, playerController, this);
+		Cast<AEnemy>(OtherActor)->TakeElementalDamage(damage, currentElement);
 	}
 
 	Destroy();

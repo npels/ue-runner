@@ -2,6 +2,7 @@
 
 
 #include "Enemy.h"
+#include "WeaponElementData.h"
 #include "Components/StaticMeshComponent.h"
 
 // Sets default values
@@ -38,13 +39,11 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-float AEnemy::TakeDamage(float DamageAmount,
-	FDamageEvent const& DamageEvent,
-	AController* EventInstigator,
-	AActor* DamageCauser) {
+float AEnemy::TakeElementalDamage(float damageAmount, class UWeaponElementData* elementType) {
 	if (beingHurt) return 0.f;
 
-	float damageTaken = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float damageScale = elementType->ScaleDamage(damageAmount, elementType);
+	float damageTaken = damageAmount * damageScale;
 
 	currentHealth -= damageTaken;
 	if (currentHealth <= 0.f) {
@@ -52,11 +51,18 @@ float AEnemy::TakeDamage(float DamageAmount,
 		return damageTaken;
 	}
 
-	EnemyMesh->SetMaterial(0, HurtMaterial);
+	if (damageScale > 1) {
+		EnemyMesh->SetMaterial(0, StrongHurtMaterial);
+	} else if (damageScale < 1) {
+		EnemyMesh->SetMaterial(0, WeakHurtMaterial);
+	} else {
+		EnemyMesh->SetMaterial(0, NormalHurtMaterial);
+	}
+	
 
 	beingHurt = true;
 	FTimerHandle HurtTimer;
-	GetWorldTimerManager().SetTimer(HurtTimer, this, &AEnemy::StopHurt, 1.0f);
+	GetWorldTimerManager().SetTimer(HurtTimer, this, &AEnemy::StopHurt, damageCooldown);
 
 	return damageTaken;
 }

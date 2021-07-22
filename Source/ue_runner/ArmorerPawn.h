@@ -32,10 +32,7 @@ public:
 	FTransform ExclamationSpawnTransform;
 
 	UPROPERTY(EditAnywhere, Category = "Interaction")
-	class UUserWidget* SignTextWidget;
-
-	UPROPERTY(EditAnywhere, Category = "Interaction")
-	class UTextData* SignTextData;
+	class UUserWidget* ArmorerWidget;
 
 	UPROPERTY(VisibleAnywhere, Category = "Interaction")
 	int interactionState = 0;

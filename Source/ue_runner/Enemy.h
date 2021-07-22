@@ -22,13 +22,25 @@ public:
 	class UMaterial* DefaultMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "Materials")
-	class UMaterial* HurtMaterial;
+	class UMaterial* WeakHurtMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "Materials")
+	class UMaterial* NormalHurtMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "Materials")
+	class UMaterial* StrongHurtMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "Health")
 	float maxHealth = 3.f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 	float currentHealth;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	float damageCooldown = 0.15f;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	class UWeaponElementData* EnemyElementType;
 
 	bool beingHurt = false;
 
@@ -43,10 +55,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual float TakeDamage(float DamageAmount,
-		FDamageEvent const& DamageEvent,
-		AController* EventInstigator,
-		AActor* DamageCauser) override;
+	float TakeElementalDamage(float damageAmount, class UWeaponElementData* elementType);
 
 	void StopHurt();
 };

@@ -15,3 +15,7 @@ Aue_runnerGameMode::Aue_runnerGameMode()
 		PlayerControllerClass = Aue_runnerPlayerController::StaticClass();
 	}
 }
+
+void Aue_runnerGameMode::BeginPlay() {
+
+}
