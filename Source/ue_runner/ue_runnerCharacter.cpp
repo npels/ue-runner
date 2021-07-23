@@ -48,6 +48,8 @@ Aue_runnerCharacter::Aue_runnerCharacter() {
 // Called when the game starts or when spawned
 void Aue_runnerCharacter::BeginPlay() {
 	Super::BeginPlay();
+
+	currentHealth = maxHealth;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,7 +95,7 @@ void Aue_runnerCharacter::PrimaryFire() {
 	attackDirection.Z = 0;
 	attackDirection.Normalize();
 
-	FVector spawnLocation = GetActorLocation() + attackDirection * 75;
+	FVector spawnLocation = GetActorLocation() + attackDirection * 100;
 	spawnLocation.Z -= 50.f;
 
 	FTransform SpawnTransform = GetActorTransform();
@@ -103,8 +105,8 @@ void Aue_runnerCharacter::PrimaryFire() {
 	FActorSpawnParameters SpawnParams;
 
 	ABulletActor* bulletActor = w->SpawnActor<ABulletActor>(bulletBP, SpawnTransform, SpawnParams);
-	bulletActor->playerController = pc;
 	bulletActor->SetElementType(currentElement);
+	bulletActor->hurtsPlayer = false;
 
 	attackOnCooldown = true;
 	FTimerHandle attackTimer;
@@ -144,6 +146,17 @@ void Aue_runnerCharacter::SetBullet(int bulletIndex, float newAttackCooldown) {
 
 void Aue_runnerCharacter::SetWeaponElement(int elementIndex) {
 	currentElement = elementTypes[elementIndex];
+}
+
+void Aue_runnerCharacter::TakeElementalDamage(float damageAmount, class UWeaponElementData* damageType) {
+	currentHealth -= damageAmount;
+	if (currentHealth <= 0.f) {
+		PlayerDie();
+	}
+}
+
+void Aue_runnerCharacter::PlayerDie() {
+	UGameplayStatics::OpenLevel(GetWorld(), "Gameover");
 }
 
 void Aue_runnerCharacter::Tick(float DeltaTime) {

@@ -60,6 +60,8 @@ protected:
 
 	void Interact();
 
+	void PlayerDie();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -89,6 +91,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponElement(int elementIndex);
 
+	UFUNCTION()
+	void TakeElementalDamage(float damageAmount, class UWeaponElementData* damageType);
+
 	UPROPERTY(BlueprintReadWrite)
 	class UUserWidget* GameUI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health")
+	float maxHealth = 5.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+	float currentHealth;
 };

@@ -4,6 +4,7 @@
 #include "ue_runnerCharacter.h"
 #include "ue_runnerPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 Aue_runnerGameMode::Aue_runnerGameMode()
 {
@@ -18,4 +19,11 @@ Aue_runnerGameMode::Aue_runnerGameMode()
 
 void Aue_runnerGameMode::BeginPlay() {
 
+}
+
+void Aue_runnerGameMode::IncrementKills() {
+	currentKills++;
+	if (currentKills >= killsNeededToWin) {
+		UGameplayStatics::OpenLevel(GetWorld(), "Victory");
+	}
 }

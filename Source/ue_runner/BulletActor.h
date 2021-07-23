@@ -27,7 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Bullet Properties")
 	class UWeaponElementData* currentElement;
 
-	AController* playerController;
+	bool hurtsPlayer = false;
 
 protected:
 	// Called when the game starts or when spawned

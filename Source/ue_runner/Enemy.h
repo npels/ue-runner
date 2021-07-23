@@ -18,6 +18,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	class UStaticMeshComponent* EnemyMesh;
 
+	UPROPERTY(EditAnywhere, Category = "Components")
+	class USphereComponent* PlayerRange;
+
 	UPROPERTY(EditAnywhere, Category = "Materials")
 	class UMaterial* DefaultMaterial;
 
@@ -40,7 +43,19 @@ public:
 	float damageCooldown = 0.15f;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
+	float attackCooldown = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
 	class UWeaponElementData* EnemyElementType;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<class AActor> bulletBP;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	class UWeaponElementData* currentElement;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
+	bool isPlayerNearby = false;
 
 	bool beingHurt = false;
 
@@ -58,4 +73,14 @@ public:
 	float TakeElementalDamage(float damageAmount, class UWeaponElementData* elementType);
 
 	void StopHurt();
+
+	void PrimaryFire();
+	void PrimaryFireEpilogue();
+
+private:
+	UFUNCTION()
+	void OnPlayerOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnPlayerOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

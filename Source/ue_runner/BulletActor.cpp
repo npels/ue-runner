@@ -43,13 +43,14 @@ void ABulletActor::SetElementType(class UWeaponElementData* element) {
 }
 
 void ABulletActor::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {
-	if (OtherActor->IsA(Aue_runnerCharacter::StaticClass()) || OtherActor->IsA(StaticClass())) {
-		return;
-	}
+	if (OtherActor->IsA(StaticClass())) return;
 
 	if (OtherActor->IsA(AEnemy::StaticClass())) {
-		FDamageEvent damageEvent;
+		if (hurtsPlayer) return;
 		Cast<AEnemy>(OtherActor)->TakeElementalDamage(damage, currentElement);
+	} else if (OtherActor->IsA(Aue_runnerCharacter::StaticClass())) {
+		if (!hurtsPlayer) return;
+		Cast<Aue_runnerCharacter>(OtherActor)->TakeElementalDamage(damage, currentElement);
 	}
 
 	Destroy();

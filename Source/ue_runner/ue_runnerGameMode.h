@@ -14,6 +14,14 @@ class Aue_runnerGameMode : public AGameModeBase
 public:
 	Aue_runnerGameMode();
 
+	UPROPERTY(EditAnywhere)
+	int killsNeededToWin = 21;
+
+	UPROPERTY(VisibleAnywhere)
+	int currentKills = 0;
+
+	void IncrementKills();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
